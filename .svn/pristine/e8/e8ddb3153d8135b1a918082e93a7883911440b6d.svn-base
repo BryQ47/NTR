@@ -1,0 +1,146 @@
+﻿<div id="students-tab" ng-controller="studentsCtrl" class="container">
+
+    <div class="row">
+        <div class="alert alert-danger error-view" role="alert" ng-show="showError">
+            <button type="button" class="close" aria-label="Close" ng-click="dismissError()"><span aria-hidden="true">&times;</span></button>
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <strong>Wystąpił błąd: </strong>{{errorMsg}}
+        </div>
+    </div>
+
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#home">Studenci</a></li>
+        <li><a data-toggle="tab" href="#menu1">Grupy</a></li>
+    </ul>
+    <hr/>
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+
+                <div id="students-filters" class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <form class="form-horizontal" name="birthplaceForm">
+                            <div class="form-group">
+                                <label class="col-xs-2">Miasto:</label>
+                                <div class="controls col-xs-8">
+                                    <input type="text" class="form-control" placeholder="Szukaj miejsca urodzenia" ng-model="studentsTable.filter().BirthPlace">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <form class="form-horizontal" name="selectGroupForm">
+                            <div class="form-group">
+                                <label class="col-xs-2">Grupa:</label>
+                                <div class="controls col-xs-8">
+                                    <select class="form-control" ng-model="studentsTable.filter().GroupName" ng-options="g for g in groupNames">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <button class="btn btn-primary pull-right" ng-disabled="!studentsTable.hasFilter()" ng-click="studentsTable.filter({})">Wyczyść filtry</button>
+                    </div>
+                </div>
+                <hr />
+
+                <div class="row mytable">
+                    <table class="table table-striped table-bordered table-hover" ng-table="studentsTable" show-filter="true">
+                        <tr ng-repeat="stud in $data">
+                            <td data-title="'Imię'" sortable="'FirstName'">
+                                {{stud.FirstName}}
+                            </td>
+                            <td data-title="'Nazwisko'" sortable="'LastName'">
+                                {{stud.LastName}}
+                            </td>
+                            <td data-title="'Indeks'" sortable="'IndexNo'">
+                                {{stud.IndexNo}}
+                            </td>
+                            <td data-title="'Miejsce urodzenia'" sortable="'BirthPlace'">
+                                {{stud.BirthPlace}}
+                            </td>
+                            <td data-title="'Data urodzenia'" sortable="'BirthDate'">
+                                {{stud.BirthDate | date:'dd.MM.yyyy'}}
+                            </td>
+                            <td data-title="'Grupa'" sortable="'GroupName'">
+                                {{stud.GroupName}}
+                            </td>
+                            <td data-title="'Edytuj'" class="selector" ng-click="selectStudent(stud.IDStudent)">
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <hr />
+
+                <div id="students-form" class="row">
+                    <div class="col-lg-10 col-md-10">
+                        <form class="form-horizontal" name="studentForm">
+                            <div class="form-group">
+                                <label class="col-xs-2">Grupa:</label>
+                                <div class="controls col-xs-8">
+                                    <select name="sfgroup" data-val="true" data-val-required="Pole Nazwisko jest wymagane." class="form-control" ng-model="selectedStudent.IDGroup" ng-options="g.IDGroup as g.Name for g in groups"></select>
+                                    <span class="field-validation-valid text-danger" data-valmsg-for="sfgroup" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-2">Imię:</label>
+                                <div class="controls col-xs-8">
+                                    <input name="sfname" type="text" data-val="true" data-val-length="Pole Imie musi być ciągiem o maksymalnej długości 20." data-val-length-max="20" data-val-required="Pole Imie jest wymagane." class="form-control" ng-model="selectedStudent.FirstName">
+                                    <span class="field-validation-valid text-danger" data-valmsg-for="sfname" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-2">Nazwisko:</label>
+                                <div class="controls col-xs-8">
+                                    <input name="sfsurname" type="text" data-val="true" data-val-length="Pole Nazwisko musi być ciągiem o maksymalnej długości 20." data-val-length-max="20" data-val-required="Pole Nazwisko jest wymagane." class="form-control" ng-model="selectedStudent.LastName">
+                                    <span class="field-validation-valid text-danger" data-valmsg-for="sfsurname" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-2">Miejsce urodzenia:</label>
+                                <div class="controls col-xs-8">
+                                    <input name="sfplace" type="text" data-val="true" data-val-length="Pole Miejsce urodzenia musi być ciągiem o maksymalnej długości 32." data-val-length-max="32" class="form-control" ng-model="selectedStudent.BirthPlace">
+                                    <span class="field-validation-valid text-danger" data-valmsg-for="sfplace" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-2">Data urodzenia:</label>
+                                <div class="controls col-xs-8">
+                                    <input name="sfdate" type="date" data-val="true" data-val-date="Pole musi być datą." class="form-control" ng-model="selectedStudent.BirthDate">
+                                    <span class="field-validation-valid text-danger" data-valmsg-for="sfdate" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-2">Indeks:</label>
+                                <div class="controls col-xs-8">
+                                    <input name="sfindex" type="text" data-val="true" data-val-length="Pole Indeks musi być ciągiem o maksymalnej długości 10." data-val-length-max="10" data-val-required="Pole Indeks jest wymagane." class="form-control" ng-model="selectedStudent.IndexNo">
+                                    <span class="field-validation-valid text-danger" data-valmsg-for="sfindex" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div id="crud-btns" class="row">
+                    <div class="col-lg-10 col-md-10">
+                        <button class="btn btn-default col-lg-1 col-md-1" ng-click="studentCreate()" ng-disabled="!(selectedStudent.FirstName && selectedStudent.LastName && selectedStudent.IndexNo && selectedStudent.IDGroup) || studentForm.$pristine">Nowy</button>
+                        <span class="col-lg-1 col-md-1"></span>
+                        <button class="btn btn-default col-lg-1 col-md-1" ng-click="studentUpdate()" ng-disabled="!(selectedStudent.FirstName && selectedStudent.LastName && selectedStudent.IndexNo && selectedStudent.IDGroup) || studentForm.$pristine">Zapisz</button>
+                        <span class="col-lg-1 col-md-1"></span>
+                        <button class="btn btn-default col-lg-1 col-md-1" ng-click="studentDelete()" ng-disabled="selectedStudent.IDStudent === undefined">Usuń</button>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div id="menu1" class="tab-pane fade">
+                <h3>Grupy</h3>
+            </div>
+    </div>
+
+</div>
+
+

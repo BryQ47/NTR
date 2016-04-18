@@ -1,0 +1,33 @@
+﻿<div class="row">
+    <div id="students-tab" ng-controller="studentsCtrl">
+
+        <table class="table table-striped" ng-table="studentsTable" show-filter="true">
+
+
+            <tr ng-repeat="stud in $data">
+                <td title="'Imię'" filter="{ FirstName: 'text'}" sortable="'FirstName'">
+                    {{stud.FirstName}}
+                </td>
+                <td title="'Nazwisko'"  sortable="'LastName'">
+                    {{stud.LastName}}
+                </td>
+                <td title="'Indeks'" filter="{ IndexNo: 'text'}" sortable="'IndexNo'">
+                    {{stud.IndexNo}}
+                </td>
+                <td title="'Miejsce urodzenia'" sortable="'BirthPlace'">
+                    {{stud.BirthPlace}}
+                </td>
+                <td title="'Data urodzenia'" sortable="'BirthDate'">
+                    {{stud.BirthDate}}
+                </td>
+                <td style="display:none">
+                    {{stud.IDStudent}}
+                </td>
+                <td style="display:none">
+                    {{stud.Stamp}}
+                </td>
+            </tr>
+        </table>
+
+    </div>
+</div>

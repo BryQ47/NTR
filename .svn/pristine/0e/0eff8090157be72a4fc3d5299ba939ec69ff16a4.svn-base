@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "JS Calculator";
+}
+
+<div ng-controller="calcCtrl">
+
+    <div class="alert alert-danger error-view" role="alert" ng-show="showError">
+        <button type="button" class="close" aria-label="Close" ng-click="dismissError()"><span aria-hidden="true">&times;</span></button>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <strong>Error: </strong>{{errorMsg}}
+    </div>
+
+    <div id="calculator">
+        <div>
+            <input id="restxt" class="calcres" value="{{result}}" type="text" disabled="disabled">
+            <button type="button" class="btn btn-primary" ng-click="btnClicked('RC')">C</button>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('D7')">7</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('D8')">8</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('D9')">9</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('OD')">/</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('CR')">sqrt</button>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('D4')">4</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('D5')">5</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('D6')">6</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('OM')">*</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('CP')">%</button>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('D1')">1</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('D2')">2</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('D3')">3</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('OS')">-</button>
+            <button type="button" class="btn btn-primary calceqbtn" ng-disabled="btnsDisabled" ng-click="btnClicked('CE')">=</button>
+
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('D0')">0</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('D.')">.</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('DI')">+/-</button>
+            <button type="button" class="btn btn-primary" ng-disabled="btnsDisabled" ng-click="btnClicked('OA')">+</button>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Scripts/calculator.js")
+@Scripts.Render("~/Scripts/calcCtrl.js")

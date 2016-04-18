@@ -1,0 +1,116 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using System.Web.Http.Description;
+using StudentsListJS.Models;
+using System.Web.Http.Results;
+
+namespace StudentsListJS.Controllers
+{
+    public class StudentsController : ExtendedApiController
+    {
+        private IHttpActionResult DefaultResponse(string exMsg = null)
+        {
+            try
+            {
+                var students = from s in storage.GetStudents()
+                               select new StudentDTO
+                               {
+                                   BirthDate = s.BirthDate,
+                                   BirthPlace = s.BirthPlace,
+                                   FirstName = s.FirstName,
+                                   IDGroup = s.IDGroup,
+                                   IDStudent = s.IDStudent,
+                                   IndexNo = s.IndexNo,
+                                   LastName = s.LastName,
+                                   GroupName = s.Group.Name,
+                                   Stamp = s.Stamp
+                               };
+
+                var groups = from g in storage.GetGroups()
+                             select new GroupDTO
+                             {
+                                 IDGroup = g.IDGroup,
+                                 Name = g.Name,
+                                 Stamp = g.Stamp
+                             };
+
+                return Json(new Response { students = students.ToArray(), groups = groups.ToArray(), error = exMsg });
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse("Nie można załadować listy studentów. " + ex.Message, HttpStatusCode.InternalServerError);
+            }
+        }
+
+
+        // GET: api/Students
+        public IHttpActionResult Get()
+        {
+            return DefaultResponse();
+        }
+
+        // PUT: api/Students
+        public IHttpActionResult Put(Student student)
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
+            string msg = null;
+            try
+            {
+                storage.UpdateStudent(student);
+            }
+            catch (DBConcurrencyException cex)
+            {
+                msg = "Student został zmodyfikowany! " + cex.Message;
+            }
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+            }
+            return DefaultResponse(msg);
+        }
+
+        // POST: api/Students
+        public IHttpActionResult Post(Student student)
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //} 
+            string msg = null;
+            try
+            {
+                storage.AddStudent(student);
+            }
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+            }
+            return DefaultResponse(msg);
+        }
+
+        // DELETE: api/Students
+        public IHttpActionResult Delete(Student student)
+        {
+            string msg = null;
+            try
+            {
+                storage.DeleteStudent(student);
+            }
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+            }
+            return DefaultResponse(msg);
+        }
+    }
+}

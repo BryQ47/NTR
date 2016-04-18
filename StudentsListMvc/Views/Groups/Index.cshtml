@@ -1,0 +1,108 @@
+﻿@model StudentsListMvc.Models.GroupsList
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Grupy";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    if (!String.IsNullOrEmpty(Model.ErrorMsg))
+    {
+        <hr />
+        <div class="alert alert-danger err-msg" role="alert">
+            <strong>Wystąpił problem: </strong>
+            @Model.ErrorMsg
+        </div>
+    }
+}
+
+<h3>Grupy</h3>
+
+<table class="table table-bordered table-hover">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.SelectedGroup.Name)
+        </th>
+    </tr>
+
+@foreach (var item in Model.Groups) {
+    <tr id="@("group" + item.IDGroup)">
+        <td class="group-id">
+            @Html.DisplayFor(modelItem => item.IDGroup)
+        </td>
+        <td class="group-name">
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+            @Html.HiddenFor(modelItem => item.Stamp, new { @class = "group-stamp" })
+
+        <td>
+            <button type="button" class="btn btn-primary" onclick="editGroup(@item.IDGroup)">Edytuj</button>
+        </td>
+    </tr>
+}
+
+</table>
+
+<br />
+Page @(Model.Groups.PageCount < Model.Groups.PageNumber ? 0 : Model.Groups.PageNumber) of @Model.Groups.PageCount
+
+@Html.PagedListPager(Model.Groups, page => Url.Action("Index",
+new { page }))
+
+<hr />
+
+<h3>Edycja</h3>
+
+@using (Html.BeginForm("CUDGroup", "Groups"))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.SelectedGroup.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SelectedGroup.Name, new { htmlAttributes = new { @class = "form-control", @id = "edit-group-name" } })
+                @Html.ValidationMessageFor(model => model.SelectedGroup.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @Html.HiddenFor(model => model.SelectedGroup.IDGroup, new { @id = "edit-group-id" })
+        @Html.HiddenFor(model => model.SelectedGroup.Stamp, new { @id = "edit-group-stamp" })
+
+        <div class="col-md-offset-2 col-md-10 CUDpane">
+
+            <div class="form-group">
+                <div>
+                    <button type="submit" name="command" value="Create" class="btn btn-default">Nowa</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div>
+                    <button type="submit" name="command" value="Update" class="btn btn-default">Zapisz</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div>
+                    <button type="submit" name="command" value="Delete" class="btn btn-default">Usuń</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+                function editGroup(rowId) {
+                    var prnt = $("#group" + rowId);
+                    $("#edit-group-name").val(prnt.find(".group-name").text().trim());
+                    $("#edit-group-stamp").val(prnt.find(".group-stamp").val());
+                    $("#edit-group-id").val(prnt.find(".group-id").text().trim());
+                }
+    </script>
+}

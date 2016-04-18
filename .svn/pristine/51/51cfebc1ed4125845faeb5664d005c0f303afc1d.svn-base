@@ -1,0 +1,109 @@
+﻿app.controller("studentsCtrl", ['$scope', '$http', 'ngTableParams',
+    function ($scope, $http, NgTableParams) {
+
+        var self = this;
+
+        $scope.studentsTable = new NgTableParams();
+
+
+        /******* Scope variables *******/
+
+        /******* Scope functions *******/
+
+
+
+        /******* Private variables *******/
+
+        $scope.students = [];
+        $scope.errorMsg = "";
+        $scope.groupNames = ["PIS", "Miszczowie"];
+
+        /******* Initialization *******/
+
+        getStudents();
+
+        $scope.applyFilter = changeFilter;
+
+
+
+        /******* Private functions *******/
+
+        function changeFilter(field, value) {
+            var filter = {};
+            filter[field] = value;
+            angular.extend($scope.tableParams.filter(), filter);
+        }
+
+
+        function loadStudents(newStudents, newGroups) {
+
+            $scope.students = newStudents;
+            $scope.groups = newGroups;
+
+            nstud = newStudents.length;
+            ngroup = newGroups.length;
+
+            for (var i = 0; i < nstud; ++i) {
+                var studGrId = newStudents[i].IDGroup;
+                for(var j = 0; j < ngroup; ++j)
+                    if (newGroups[j].IDGroup === studGrId) {
+                        newStudents[i].GroupName = newGroups[j].Name;
+                        break;
+                    }
+            }
+
+            var gnames = [];
+            for (var k = 0; k < ngroup; ++k)
+                gnames.push(newGroups[k].Name);
+
+            $scope.groupNames = gnames;
+
+            $scope.studentsTable.settings({
+                dataset: newStudents
+            });
+            //changeFilter('GroupName', '');
+
+        }
+
+        function getStudents() {
+
+            $http({
+                method: 'GET',
+                url: '/api/Students'
+            }).then(function successCallback(response) {
+                $scope.students = response;
+                $scope.errorMsg = "";
+
+                loadStudents(response.data.students, response.data.groups);
+
+
+            }, function errorCallback(response) {
+                $scope.students = [];
+                $scope.errorMsg = response;
+            });
+
+
+        }
+
+        function putStudent() {
+
+            var newStudent = { IDGroup: 1, FirstName: "Leszek", LastName: "Bogucki", IndexNo: "48903204" };
+
+            $http({
+                method: 'DELETE',
+                url: '/api/Students/32',
+                data: JSON.stringify({id: 31})
+            }).then(function successCallback(response) {
+                // this callback will be called asynchronously
+                // when the response is available
+                $scope.data = response;
+            }, function errorCallback(response) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+                $scope.data = response;
+            });
+
+        }
+
+
+}]);

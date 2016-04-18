@@ -1,0 +1,54 @@
+﻿app.controller("studentsCtrl", function ($scope, $http) {
+
+    getStudents();
+    putStudent();
+
+    /******* Scope variables *******/
+
+    /******* Scope functions *******/
+
+    /******* Private variables *******/
+
+    $scope.data = "";
+
+    /******* Private functions *******/
+
+    function getStudents() {
+
+        $http({
+            method: 'GET',
+            url: '/api/Students'
+        }).then(function successCallback(response) {
+            // this callback will be called asynchronously
+            // when the response is available
+            $scope.data = response;
+        }, function errorCallback(response) {
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+            $scope.data = response;
+        });
+
+    }
+
+    function putStudent() {
+
+        var newStudent = { IDGroup: 1, FirstName: "Leszek", LastName: "Bogucki", IndexNo: "48903204" };
+
+        $http({
+            method: 'DELETE',
+            url: '/api/Students/32',
+            data: JSON.stringify({id: 31})
+        }).then(function successCallback(response) {
+            // this callback will be called asynchronously
+            // when the response is available
+            $scope.data = response;
+        }, function errorCallback(response) {
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+            $scope.data = response;
+        });
+
+    }
+
+
+});

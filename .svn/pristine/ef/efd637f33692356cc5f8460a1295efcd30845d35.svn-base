@@ -1,0 +1,5 @@
+﻿<div class="row">
+    <div id="students-tab" ng-controller="studentsCtrl">
+        {{data}}
+    </div>
+</div>

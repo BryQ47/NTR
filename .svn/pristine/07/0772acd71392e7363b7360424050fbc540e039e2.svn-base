@@ -1,0 +1,147 @@
+﻿app.controller("studentsCtrl", ['$scope', '$http', 'ngTableParams',
+    function ($scope, $http, NgTableParams) {
+
+        var self = this;
+
+        $scope.studentsTable = new NgTableParams();
+
+
+        /******* Scope variables *******/
+
+        $scope.students = [];
+        $scope.groups = [];
+        $scope.groupNames = [];
+        $scope.showError = false;
+        $scope.errorMsg = "";
+        $scope.selectedStudent = {};
+
+        /******* Scope functions *******/
+
+        $scope.dismissError = HideErrorMsg;
+
+        $scope.selectStudent = function (id) {
+            var students = $scope.students;
+            var nstud = students.length;
+            for (var i = 0; i < nstud; ++i) {
+                var stud = students[i];
+                if (stud.IDStudent === id) {
+                    var s = {};
+                    s.BirthDate = new Date(stud.BirthDate);
+                    s.BirthPlace = stud.BirthPlace,
+                    s.FirstName = stud.FirstName,
+                    s.IDGroup = stud.IDGroup,
+                    s.IDStudent = stud.IDStudent,
+                    s.IndexNo = stud.IndexNo,
+                    s.LastName = stud.LastName,
+                    s.Stamp = stud.Stamp
+                    $scope.selectedStudent = s;
+                }
+            }
+            $scope.studentForm.$setPristine();
+        }
+
+        $scope.studentCreate = createStudent;
+        $scope.studentUpdate = updateStudent;
+        $scope.studentDelete = deleteStudent;
+
+        /******* Private variables *******/
+
+        
+
+        /******* Initialization *******/
+
+        getStudents();
+
+        //$scope.applyFilter = changeFilter;
+
+
+
+        /******* Private functions *******/
+
+        //function changeFilter(field, value) {
+        //    var filter = {};
+        //    filter[field] = value;
+        //    angular.extend($scope.tableParams.filter(), filter);
+        //}
+
+        function HideErrorMsg() {
+            $scope.showError = false;
+            $scope.errorMsg = "";
+        }
+
+
+        function loadStudents(newStudents, newGroups) {
+
+            $scope.students = newStudents;
+            $scope.groups = newGroups;
+            $scope.selectedStudent = {};
+
+            ngroup = newGroups.length;
+
+            var gnames = [];
+            for (var k = 0; k < ngroup; ++k)
+                gnames.push(newGroups[k].Name);
+
+            $scope.groupNames = gnames;
+
+            $scope.studentsTable.settings({
+                dataset: newStudents
+            });
+
+        }
+
+        function successCalback(response) {
+            HideErrorMsg();
+            loadStudents(response.data.students, response.data.groups);
+            if (response.data.error) {
+                $scope.errorMsg = response.data.error;
+                $scope.showError = true;
+            }
+        }
+
+        function errorCallback(response) {
+            $scope.errorMsg = "Błąd serwera";
+            $scope.showError = true;
+        }
+
+        function getStudents() {
+            $http({
+                method: 'GET',
+                url: '/api/Students'
+            }).then(successCalback, errorCallback);
+        }
+
+        function createStudent() {
+            var newStudent = {};
+            newStudent.FirstName = $scope.selectedStudent.FirstName;
+            newStudent.LastName = $scope.selectedStudent.LastName;
+            newStudent.BirthPlace = $scope.selectedStudent.BirthPlace;
+            newStudent.BirthDate = $scope.selectedStudent.BirthDate;
+            newStudent.IndexNo = $scope.selectedStudent.IndexNo;
+            newStudent.IDGroup = $scope.selectedStudent.IDGroup;
+
+            $http({
+                method: 'POST',
+                url: '/api/Students/POST',
+                data: JSON.stringify(newStudent)
+            }).then(successCalback, errorCallback);
+        }
+
+        function updateStudent() {
+            $http({
+                method: 'POST',
+                url: '/api/Students/PUT',
+                data: JSON.stringify($scope.selectedStudent)
+            }).then(successCalback, errorCallback);
+        }
+
+        function deleteStudent() {
+            $http({
+                method: 'POST',
+                url: '/api/Students/DELETE',
+                data: JSON.stringify($scope.selectedStudent)
+            }).then(successCalback, errorCallback);
+        }
+
+
+}]);

@@ -1,0 +1,189 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using System.Web.Http.Description;
+using StudentsListJS.Models;
+
+namespace StudentsListJS.Controllers
+{
+    public class StudentsController : ExtendedApiController
+    {
+        private Storage storage = new Storage();
+
+
+        private StorageContext db = new StorageContext();
+
+        private Tuple<StudentDTO[],GroupDTO[]> GetLists()
+        {
+            var students = from s in storage.GetStudents()
+                           select new StudentDTO
+                           {
+                               BirthDate = s.BirthDate,
+                               BirthPlace = s.BirthPlace,
+                               FirstName = s.FirstName,
+                               IDGroup = s.IDGroup,
+                               IDStudent = s.IDStudent,
+                               IndexNo = s.IndexNo,
+                               LastName = s.LastName,
+                               Stamp = s.Stamp
+                           };
+
+            var groups = from g in storage.GetGroups()
+                           select new GroupDTO
+                           {
+                               IDGroup = g.IDGroup,
+                               Name = g.Name,
+                               Stamp = g.Stamp
+                           };
+
+            return new Tuple<StudentDTO[], GroupDTO[]>(students.ToArray(), groups.ToArray());
+        }
+
+
+        // GET: api/Students
+        public IHttpActionResult GetStudents()
+        {
+            var lists = GetLists();
+            return Json(new { students = lists.Item1, groups = lists.Item2 });
+        }
+
+        //public IQueryable<Student> GetStudents()
+        //{
+        //    return db.Students;
+        //}
+
+        // GET: api/Students/5
+        [ResponseType(typeof(Student))]
+        public IHttpActionResult GetStudent(int id)
+        {
+            Student student = db.Students.Find(id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(student);
+        }
+
+        // PUT: api/Students/5
+        [ResponseType(typeof(void))]
+        public IHttpActionResult PutStudent(Student student)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            //db.Entry(student).State = EntityState.Modified;
+            storage.AddStudent(student);
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex.Message);
+            }
+
+            var result = from s in storage.GetStudents()
+                         select new StudentDTO
+                         {
+                             BirthDate = s.BirthDate,
+                             BirthPlace = s.BirthPlace,
+                             FirstName = s.FirstName,
+                             IDGroup = s.IDGroup,
+                             IDStudent = s.IDStudent,
+                             IndexNo = s.IndexNo,
+                             LastName = s.LastName,
+                             Stamp = s.Stamp
+                         };
+
+            return Json(new { students = result });
+        }
+
+        // POST: api/Students
+        [ResponseType(typeof(Student))]
+        public IHttpActionResult PostStudent(Student student)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            storage.AddStudent(student);
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex.Message);
+            }
+
+            var result = from s in storage.GetStudents()
+                         select new StudentDTO
+                         {
+                             BirthDate = s.BirthDate,
+                             BirthPlace = s.BirthPlace,
+                             FirstName = s.FirstName,
+                             IDGroup = s.IDGroup,
+                             IDStudent = s.IDStudent,
+                             IndexNo = s.IndexNo,
+                             LastName = s.LastName,
+                             Stamp = s.Stamp
+                         };
+
+            return Json(new { students = result });
+        }
+
+        // DELETE: api/Students/5
+        [ResponseType(typeof(Student))]
+        public IHttpActionResult DeleteStudent(int id)
+        {
+            //Student student = db.Students.Find(id);
+            //if (student == null)
+            //{
+            //    return NotFound();
+            //}
+
+            storage.DeleteStudentById(id);
+
+            var result = from s in storage.GetStudents()
+                         select new StudentDTO
+                         {
+                             BirthDate = s.BirthDate,
+                             BirthPlace = s.BirthPlace,
+                             FirstName = s.FirstName,
+                             IDGroup = s.IDGroup,
+                             IDStudent = s.IDStudent,
+                             IndexNo = s.IndexNo,
+                             LastName = s.LastName,
+                             Stamp = s.Stamp
+                         };
+
+            return Json(new { students = result });
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private bool StudentExists(int id)
+        {
+            return db.Students.Count(e => e.IDStudent == id) > 0;
+        }
+    }
+}

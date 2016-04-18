@@ -1,0 +1,70 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+#calculator {
+    padding: 2px 0px 5px 5px;
+    font-size: 18pt;
+    background-color: #abc3d9;
+    border-radius: 4px;
+    width: 338px;
+    margin: 100px auto;
+}
+
+.btn {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    margin: 4px 0px 4px 0px;
+    display: inline-block;
+    vertical-align: top;
+    background-color: #2970bd!important;
+}
+
+.calceqbtn {
+    width: 60px;
+    height: 125px;
+    position: absolute;
+    margin-left: 7px;
+}
+
+.calcres {
+    width: 258px;
+    height: 60px;
+    margin: 3px 1px 0px 1px;
+    text-align: right;
+    padding-right: 5px;
+    background-color: #eef8ff;
+    color: #1B2444;
+    border-radius: 4px;
+}
+
+.error-view {
+    text-align: center;
+    width: 338px;
+    margin-left: -169px;
+    left: 50%;
+    top: 50px;
+    position: absolute;
+}
